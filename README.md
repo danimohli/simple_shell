@@ -4,3 +4,5 @@ Just as printf was done tofunction like the real C standard library function pri
 Shell.
 
 Its going tobe build to function partly if not totaly like the shell itself.
+
+Welcome.
