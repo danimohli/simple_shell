@@ -21,7 +21,7 @@ ssize_t read_command(char *command)
  * execute_command - Function to execute command
  * @command: execute comm
  */
-void execute_command(char *command)
+void execute_command(char *command, char *args[])
 {
 	int status;
 	pid_t pid = fork();
