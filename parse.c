@@ -35,10 +35,10 @@ void execute_command(char *command, char *args[])
 	else if (pid == 0)
 	{
 		/* Child process */
-		if (execlp(command, command, NULL) == -1)
+		if (execvp(command, args) == -1)
 		{
 			/* If execlp returns, an error occurred */
-			perror("execlp");
+			perror("execvp");
 			exit(EXIT_FAILURE);
 		}
 	}
