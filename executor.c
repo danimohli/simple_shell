@@ -1,27 +1,23 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include "executor.h"
+#include "header.h"
 
-/**
- * execute_command - Executes a given command using execve
- * @command: The command to execute
- */
+/* Function definitions */
 void execute_command(char *command)
 {
-	pid_t pid;
+	char *cmd_path = find_executable(command);
+	if (!cmd_path)
+	{
+		error_message(command);
+		return;
+	}
+	fork_and_execute(cmd_path, command);
+	free(cmd_path);
+}
+
+void fork_and_execute(char *cmd_path, char *command)
+{
+	pid_t pid = fork();
 	int status;
-	char *argv[2];
-	char *envp[] = {NULL};
 
-	/* Prepare arguments */
-	argv[0] = command;
-	argv[1] = NULL;
-
-	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
@@ -29,19 +25,29 @@ void execute_command(char *command)
 	}
 	if (pid == 0)
 	{
-		/* In child process */
-		if (execve(command, argv, envp) == -1)
-		{
+		char *argv[] = {command, NULL};
+		if (execve(cmd_path, argv, environ) == -1)
 			perror("execve");
-			exit(EXIT_FAILURE);
-		}
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		/* In parent process */
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			perror("waitpid");
-		}
+		waitpid(pid, &status, 0);
 	}
+}
+
+void build_command_path(char *cmd, char **cmd_path)
+{
+	*cmd_path = strdup(cmd);
+}
+
+void error_message(char *command)
+{
+	fprintf(stderr, "%s: command not found\n", command);
+}
+
+void free_resources(char *line, char *cmd_path)
+{
+	free(line);
+	free(cmd_path);
 }

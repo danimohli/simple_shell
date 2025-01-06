@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "executor.h"
+#include "header.h"
 
 /**
  * main - Entry point of the shell
@@ -10,38 +7,57 @@
  */
 int main(void)
 {
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t read;
+	char *line;
 
 	while (1)
 	{
-		/* Display the prompt */
-		printf("myshell$ ");
-		fflush(stdout);
-
-		/* Read the input line */
-		read = getline(&line, &len, stdin);
-		if (read == -1)
-		{
-			printf("\nExiting shell...\n");
+		display_prompt();
+		line = read_input();
+		if (!line)
 			break;
-		}
 
-		/* Remove newline character */
-		line[strcspn(line, "\n")] = '\0';
+		strip_newline(line);
 
-		/* Exit condition */
-		if (strcmp(line, "exit") == 0)
-		{
-			printf("Goodbye!\n");
+		if (handle_exit(line))
 			break;
-		}
 
-		/* Execute the command */
 		execute_command(line);
+		free(line);
 	}
+	return (0);
+}
 
-	free(line);
+void display_prompt(void)
+{
+	printf("myshell$ ");
+	fflush(stdout);
+}
+
+char *read_input(void)
+{
+	char *line = NULL;
+	size_t len = 0;
+
+	if (getline(&line, &len, stdin) == -1)
+	{
+		free(line);
+		printf("\nExiting shell...\n");
+		return (NULL);
+	}
+	return (line);
+}
+
+void strip_newline(char *line)
+{
+	line[strcspn(line, "\n")] = '\0';
+}
+
+int handle_exit(char *line)
+{
+	if (strcmp(line, "exit") == 0)
+	{
+		printf("Goodbye!\n");
+		return (1);
+	}
 	return (0);
 }
