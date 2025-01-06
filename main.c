@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include "executor.h"
 
 /**
  * main - Entry point of the shell
@@ -24,12 +24,11 @@ int main(void)
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
-			/* Handle EOF (Ctrl+D) */
 			printf("\nExiting shell...\n");
 			break;
 		}
 
-		/* Remove newline character from the input */
+		/* Remove newline character */
 		line[strcspn(line, "\n")] = '\0';
 
 		/* Exit condition */
@@ -39,8 +38,8 @@ int main(void)
 			break;
 		}
 
-		/* For now, just echo the input */
-		printf("You typed: %s\n", line);
+		/* Execute the command */
+		execute_command(line);
 	}
 
 	free(line);
