@@ -6,8 +6,8 @@
  */
 void display_prompt(void)
 {
-    printf("myshell$ ");
-    fflush(stdout);
+	printf("myshell$ ");
+	fflush(stdout);
 }
 
 /**
@@ -17,16 +17,16 @@ void display_prompt(void)
  */
 char *read_input(void)
 {
-    char *line = NULL;
-    size_t len = 0;
+	char *line = NULL;
+	size_t len = 0;
 
-    if (getline(&line, &len, stdin) == -1)
-    {
-        free(line);
-        printf("\nExiting shell...\n");
-        return (NULL);
-    }
-    return (line);
+	if (getline(&line, &len, stdin) == -1)
+	{
+		free(line);
+		printf("\nExiting shell...\n");
+		return (NULL);
+	}
+	return (line);
 }
 
 /**
@@ -35,7 +35,7 @@ char *read_input(void)
  */
 void strip_newline(char *line)
 {
-    line[strcspn(line, "\n")] = '\0';
+	line[strcspn(line, "\n")] = '\0';
 }
 
 /**
@@ -46,12 +46,12 @@ void strip_newline(char *line)
  */
 int handle_exit(char *line)
 {
-    if (strcmp(line, "exit") == 0)
-    {
-        printf("Goodbye!\n");
-        return (1);
-    }
-    return (0);
+	if (strcmp(line, "exit") == 0)
+	{
+		printf("Goodbye!\n");
+		return (1);
+	}
+	return (0);
 }
 
 /**
@@ -61,25 +61,26 @@ int handle_exit(char *line)
  */
 int main(void)
 {
-    char *line;
+	char *line;
 
-    while (1)
-    {
-        display_prompt();
-        line = read_input();
-        if (!line)
-            break;
+	while (1)
+	{
+		display_prompt();
+		line = read_input();
 
-        strip_newline(line);
+		if (!line)
+			break;
 
-        if (handle_exit(line))
-        {
-            free(line);
-            break;
-        }
+		strip_newline(line);
 
-        execute_command(line);
-        free(line);
-    }
-    return (0);
+		if (handle_exit(line))
+		{
+			free(line);
+			break;
+		}
+
+		execute_command(line);
+		free(line);
+	}
+	return (0);
 }
